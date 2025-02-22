@@ -13,6 +13,13 @@ jobs:
         steps:
         # initial checkout of this repo
         - uses: actions/checkout@v4
+        - name: Sparse Checkout für Submodule
+          run: |
+            git submodule init
+            git submodule update --depth 1 --checkout --remote
+            cd generator/external/stb
+            git sparse-checkout init --cone
+            git sparse-checkout set stb_image.h
         - name: Shorten Image ref
           run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
         - name: Set up QEMU
