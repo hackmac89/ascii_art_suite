@@ -30,29 +30,8 @@ jobs:
         - name: Build and push Generator
           uses: docker/build-push-action@v6
           with:
-            context: ./docker/generator.Dockerfile
-            platforms: linux/amd64,linux/arm64
-            push: true
-            tags: |
-              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
-              ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
-            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
-        - name: Build and push Generator
-          uses: docker/build-push-action@v6
-          with:
             context: .
             file: ./docker/generator.Dockerfile
-            platforms: linux/amd64,linux/arm64
-            push: true
-            tags: |
-              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
-              ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
-            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
-        - name: Build and push Generator
-          uses: docker/build-push-action@v6
-          with:
-            context: .
-            file: ./docker/viewer.Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
@@ -62,7 +41,8 @@ jobs:
         - name: Build and push Viewer
           uses: docker/build-push-action@v6
           with:
-            context: ./docker/viewer.Dockerfile
+            context: .
+            file: ./docker/viewer.Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
