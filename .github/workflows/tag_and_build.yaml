@@ -8,7 +8,7 @@ on:
 
 jobs:
     build:
-        name: Tag and Build
+        name: Build ASCII Art Suite
         runs-on: ubuntu-latest
         steps:
         # initial checkout of this repo
@@ -43,7 +43,7 @@ jobs:
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
-              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite:ascii-art-generator-${{ env.SHORT_SHA }}
               ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
             labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
         - name: Build and push Viewer
@@ -54,10 +54,11 @@ jobs:
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
-              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-viewer-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite:ascii-art-viewer-${{ env.SHORT_SHA }}
               ghcr.io/hackmac89/ascii_art_suite/ascii-art-viewer:latest
             labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-viewer"
     tag:
+        name: Tag and Release ASCII Art Suite
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -70,4 +71,39 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
             WITH_V: false
-          
+    build-release-artifacts:
+        name: Build Release Artifacts
+        runs-on: ubuntu-latest
+        needs: [build,tag]
+        strategy:
+          matrix:
+            os: [linux, windows, macos]
+            arch: [amd64, arm64]
+            include:
+              - os: linux
+                GOOS: linux
+                EXT: ""
+              - os: windows
+                GOOS: windows
+                EXT: ".exe"
+              - os: macos
+                GOOS: darwin
+                EXT: ""
+        steps:
+        # initial checkout of this repo
+        - uses: actions/checkout@v4
+        - name: Install Dependencies (Linux)
+          if: matrix.os == 'linux'
+          run: sudo apt update && sudo apt install -y build-essential
+        - name: Compile Generator
+          run: |
+            mkdir -p dist
+            gcc -Wall -pedantic -std=c99 -O2 -o dist/aart_generator-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c
+        - name: Compile Viewer
+          run: |
+            gcc -Wall -pedantic -std=c99 -O2 -o dist/aart_viewer-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c
+        - name: Upload Binaries to Release
+          uses: softprops/action-gh-release@v2
+          with:
+            files: dist/*
+            token: ${{ secrets.AART_ASSET_RELEASE_TOKEN }}
