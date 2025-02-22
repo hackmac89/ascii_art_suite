@@ -65,9 +65,6 @@ void print_ascii_matrix(aart_matrix_t *ascii_matrix) {
     }
 
     for (int i = 0; i < ascii_matrix->height; i++) {
-        for (int j = 0; j < ascii_matrix->width; j++) {
-            if (ascii_matrix->ascii_data[i][j] != '\0') printf("%c", ascii_matrix->ascii_data[i][j]);
-        }
-        printf("\n");
+        printf("%s\n", ascii_matrix->ascii_data[i]);
     }
 }
