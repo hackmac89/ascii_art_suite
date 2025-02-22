@@ -55,4 +55,5 @@ dkms.conf
 .DS_Store
 *.aart
 aart_gen*
+aart_viewer*
 *.BAK
