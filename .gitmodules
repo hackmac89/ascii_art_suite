@@ -1,0 +1,3 @@
+[submodule "generator/external/stb"]
+	path = generator/external/stb
+	url = https://github.com/nothings/stb.git
