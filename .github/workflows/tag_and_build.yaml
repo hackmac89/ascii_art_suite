@@ -41,7 +41,7 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             context: .
-            dockerfile: ./docker/generator.Dockerfile
+            file: ./docker/generator.Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
@@ -52,7 +52,7 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             context: .
-            dockerfile: ./docker/viewer.Dockerfile
+            file: ./docker/viewer.Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
             tags: |
