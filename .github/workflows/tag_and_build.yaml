@@ -1,0 +1,83 @@
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        types:
+        - closed
+
+jobs:
+    build:
+        name: Tag and Build
+        runs-on: ubuntu-latest
+        steps:
+        # initial checkout of this repo
+        - uses: actions/checkout@v4
+        - name: Shorten Image ref
+          run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v3
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+          with:
+            version: v0.9.1 # Pin version to avoid Manifest parsing error in FluxCD
+        - name: Login to Docker
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+        - name: Build and push Generator
+          uses: docker/build-push-action@v6
+          with:
+            context: ./docker/generator.Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: |
+              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
+            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
+        - name: Build and push Generator
+          uses: docker/build-push-action@v6
+          with:
+            context: ./docker/generator.Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: |
+              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
+            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
+        - name: Build and push Generator
+          uses: docker/build-push-action@v6
+          with:
+            context: ./docker/generator.Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: |
+              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-generator-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite/ascii-art-generator:latest
+            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-generator"
+        - name: Build and push Viewer
+          uses: docker/build-push-action@v6
+          with:
+            context: ./docker/viewer.Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: |
+              ghcr.io/hackmac89/ascii_art_suite:main-ascii-art-viewer-${{ env.SHORT_SHA }}
+              ghcr.io/hackmac89/ascii_art_suite/ascii-art-viewer:latest
+            labels: org.opencontainers.image.source="https://github.com/hackmac89/ascii_art_suite/ascii-art-viewer"
+    tag:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        needs: build
+        steps:
+        # initial checkout of this repo
+        - uses: actions/checkout@v4
+        - name: Bump version and push tag
+          uses: anothrNick/github-tag-action@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
+            WITH_V: false
+          
