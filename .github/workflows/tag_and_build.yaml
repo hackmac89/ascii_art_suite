@@ -71,9 +71,6 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
             WITH_V: false
-        - name: Set new tag output
-          id: new_tag
-          run: echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
     build-release-artifacts:
         name: Build Release Artifacts
         runs-on: ubuntu-latest
@@ -97,6 +94,9 @@ jobs:
         - uses: actions/checkout@v4
           with:
             fetch-depth: 0  # get tags for usage in the "softprops/action-gh-release" action
+        - name: Get previously created tag
+          id: get_tag
+          run: echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
         - name: Sparse Checkout für Submodule
           run: |
             git submodule init
@@ -121,6 +121,6 @@ jobs:
           #if: startsWith(github.ref, 'refs/tags/')
           with:
             files: dist/*
-            name:  ${{ steps.new_tag.outputs.new_tag }}
-            tag_name: ${{ steps.new_tag.outputs.new_tag }}
+            name:  ${{ steps.get_tag.outputs.new_tag }}
+            tag_name: ${{ steps.get_tag.outputs.new_tag }}
             token: ${{ secrets.AART_ASSET_RELEASE_TOKEN }}
