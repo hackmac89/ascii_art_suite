@@ -2,9 +2,10 @@ on:
     push:
         branches:
         - main
-    pull_request:
-    release:
-      types: [published]
+    #pull_request:
+    #  types: closed
+    #release:
+    #  types: [published]
 
 jobs:
     build:
@@ -112,7 +113,7 @@ jobs:
             mkdir -p dist
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_viewer-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c -lm
         - name: Upload Artifacts
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: binaries
             path: dist/*
@@ -127,7 +128,7 @@ jobs:
           id: get_tag
           run: echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
         - name: Download Artifacts
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: binaries
         - name: Upload Binaries to Release
