@@ -80,13 +80,6 @@ jobs:
             #os: [windows-latest, ubuntu-latest, macos-latest]
             os: [ubuntu-latest, macos-latest]
             arch: [amd64, arm64]
-            include:
-              - os: linux
-                EXT: ""
-              - os: windows
-                EXT: ".exe"
-              - os: macos
-                EXT: ""
         steps:
         # initial checkout of this repo
         - uses: actions/checkout@v4
