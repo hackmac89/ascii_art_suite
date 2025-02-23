@@ -109,7 +109,7 @@ jobs:
             if not exist dist mkdir dist
           shell: cmd
         - name: Create dist directory (Linux/Mac)
-          if: matrix.os != 'windows'
+          if: matrix.os != 'windows-latest'
           run: mkdir -p dist
         - name: Compile Generator
           run: |
