@@ -122,20 +122,20 @@ jobs:
         # e.g. by using "aarch64-linux-gnu-gcc" instead of "gcc" on the "ubuntu-latest" runner with the "arm64" architecture
         - name: Compile Generator
           run: |
-            gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_generator-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
+            gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_generator-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
         - name: Compile Viewer
           run: |
-            gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_viewer-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c -lm
+            gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_viewer-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c -lm
         - name: Upload Generator Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: aart_generator-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
-            path: dist/aart_generator-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
+            name: aart_generator-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
+            path: dist/aart_generator-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
         - name: Upload Viewer Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: aart_viewer-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
-            path: dist/aart_viewer-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
+            name: aart_viewer-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
+            path: dist/aart_viewer-${{ github.event.release.tag_name || steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
     create_release:
         name: Create Release
         runs-on: ubuntu-latest
