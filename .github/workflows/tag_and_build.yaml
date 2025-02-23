@@ -136,7 +136,9 @@ jobs:
         - uses: actions/checkout@v4
         - name: Get previously created tag
           id: get_tag
-          run: echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          run: |
+            echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+            echo "Debug: $new_tag"
         - name: Download All Artifacts
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
