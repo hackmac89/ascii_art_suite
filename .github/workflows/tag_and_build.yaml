@@ -77,7 +77,8 @@ jobs:
         needs: [build,tag]
         strategy:
           matrix:
-            os: [windows-latest, ubuntu-latest, macos-latest]
+            #os: [windows-latest, ubuntu-latest, macos-latest]
+            os: [ubuntu-latest, macos-latest]
             arch: [amd64, arm64]
             include:
               - os: linux
