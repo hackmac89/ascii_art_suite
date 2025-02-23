@@ -101,15 +101,21 @@ jobs:
             git sparse-checkout set --skip-checks stb_image.h
             git pull origin master
         - name: Install Dependencies (Linux)
-          if: matrix.os == 'linux'
+          if: matrix.os == 'ubuntu-latest'
           run: sudo apt update && sudo apt install -y build-essential
+        - name: Create dist directory (Windows)
+          if: matrix.os == 'windows-latest'
+          run: |
+            if not exist dist mkdir dist
+          shell: cmd
+        - name: Create dist directory (Linux/Mac)
+          if: matrix.os != 'windows'
+          run: mkdir -p dist
         - name: Compile Generator
           run: |
-            mkdir -p dist
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_generator-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
         - name: Compile Viewer
           run: |
-            mkdir -p dist
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_viewer-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c -lm
         - name: Upload Artifacts
           uses: actions/upload-artifact@v4
