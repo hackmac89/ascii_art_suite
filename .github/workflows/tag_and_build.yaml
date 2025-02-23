@@ -106,10 +106,10 @@ jobs:
         - name: Compile Generator
           run: |
             mkdir -p dist
-            gcc -Wall -pedantic -std=c99 -O2 -o dist/aart_generator-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c
+            gcc -Wall -pedantic -std=c99 -O2 -lm -o dist/aart_generator-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c
         - name: Compile Viewer
           run: |
-            gcc -Wall -pedantic -std=c99 -O2 -o dist/aart_viewer-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c
+            gcc -Wall -pedantic -std=c99 -O2 -lm -o dist/aart_viewer-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c
         - name: Upload Binaries to Release
           uses: softprops/action-gh-release@v2
           with:
