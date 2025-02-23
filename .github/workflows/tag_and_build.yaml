@@ -90,8 +90,6 @@ jobs:
         steps:
         # initial checkout of this repo
         - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0  # get tags for usage in the "softprops/action-gh-release" action
         - name: Sparse Checkout für Submodule
           run: |
             git submodule init
@@ -134,6 +132,8 @@ jobs:
         steps:
         # initial checkout of this repo
         - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # get tags for usage in the "softprops/action-gh-release" action
         - name: Get previously created tag
           id: get_tag
           run: |
