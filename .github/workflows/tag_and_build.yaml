@@ -79,13 +79,16 @@ jobs:
         strategy:
           matrix:
             os: [windows-latest, ubuntu-latest, macos-latest]
-            arch: [amd64, arm64]
+            #arch: [amd64, arm64]
             include:
               - os: ubuntu-latest
+                arch: amd64
                 EXT: ""
               - os: macos-latest
+                arch: arm64
                 EXT: ""
               - os: windows-latest
+                arch: amd64
                 EXT: ".exe"
         steps:
         # initial checkout of this repo
