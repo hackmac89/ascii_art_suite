@@ -93,6 +93,12 @@ jobs:
         steps:
         # initial checkout of this repo
         - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # get tags for usagefor the asset naming later on...
+        - name: Get previously created tag
+          id: get_tag
+          run: |
+            echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
         - name: Sparse Checkout für Submodule
           run: |
             git submodule init
@@ -112,6 +118,8 @@ jobs:
         - name: Create dist directory (Linux/Mac)
           if: matrix.os != 'windows-latest'
           run: mkdir -p dist
+        # TODO: Use real cross compiling on the actual runners here,
+        # e.g. by using "aarch64-linux-gnu-gcc" instead of "gcc" on the "ubuntu-latest" runner with the "arm64" architecture
         - name: Compile Generator
           run: |
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_generator-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
@@ -121,13 +129,13 @@ jobs:
         - name: Upload Generator Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: aart_generator-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
-            path: dist/aart_generator-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
+            name: aart_generator-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
+            path: dist/aart_generator-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
         - name: Upload Viewer Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: aart_viewer-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
-            path: dist/aart_viewer-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
+            name: aart_viewer-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
+            path: dist/aart_viewer-${{ steps.get_tag.outputs.new_tag }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }}
     create_release:
         name: Create Release
         runs-on: ubuntu-latest
@@ -141,16 +149,17 @@ jobs:
           id: get_tag
           run: |
             echo "new_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-            echo "Debug: $new_tag"
+            echo "NEW_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
         - name: Download All Artifacts
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            TAG: ${{ env.NEW_TAG }}
           run: |
             mkdir -p dist
             for os in linux macos windows; do
               for arch in amd64 arm64; do
                 for type in generator viewer; do
-                  artifact_name=aart_${type}-${os}-${arch}
+                  artifact_name=aart_${type}-${TAG}-${os}-${arch}
                   gh run download --name $artifact_name --dir dist/
                 done
               done
