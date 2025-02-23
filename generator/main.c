@@ -13,18 +13,36 @@ void print_usage(void) {
 char *remove_file_extension(const char *filename) {
     char *dot = strrchr(filename, '.');
     if (!dot || dot == filename) {
-        return strdup(filename);
+        char *result = (char *)malloc(strlen(filename) + 1);
+        if (result) {
+            strcpy(result, filename);
+        }
+        return result;
     }
-    return strndup(filename, dot - filename);
+    size_t len = dot - filename;
+    char *result = (char *)malloc(len + 1);
+    if (result) {
+        strncpy(result, filename, len);
+        result[len] = '\0';
+    }
+    return result;
 }
 
 // This function is used to extract the filename from a path.
-char *extract_filename(const char *filename) {
-    char *slash = strrchr(filename, '/');
-    if (!slash || slash == filename) {
-        return strdup(filename);
+char *extract_filename(const char *path) {
+    char *slash = strrchr(path, '/');
+    if (!slash || slash == path) {
+        char *result = (char *)malloc(strlen(path) + 1);
+        if (result) {
+            strcpy(result, path);
+        }
+        return result;
     }
-    return strdup(slash + 1);
+    char *result = (char *)malloc(strlen(slash + 1) + 1);
+    if (result) {
+        strcpy(result, slash + 1);
+    }
+    return result;
 }
 
 int main(int argc, char **argv) {
