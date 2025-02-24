@@ -3,11 +3,12 @@ CC=gcc
 CFLAGS=-Wall -Wextra -Werror -std=c99 -pedantic -g -O2
 SRC=functions.c main.c
 OBJ=$(SRC:.c=.o)
+LDLIBS=-lm
 
 all: $(OUTPUT)
 
 $(OUTPUT): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(OUTPUT)
+	$(CC) $(CFLAGS) $(OBJ) -o $(OUTPUT) $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
