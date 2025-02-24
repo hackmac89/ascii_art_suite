@@ -55,6 +55,7 @@ Usage:
   make -C viewer                - Builds only the viewer
   make docker-build-generator   - Builds the docker image for the ASCII art generator
   make docker-build-viewer      - Builds the docker image for the ASCII art viewer
+  make valgrind                 - Runs valgrind on the generator and viewer applications
   make help                     - Shows this message
 ```
 
@@ -74,7 +75,8 @@ I did not want to check in the several thousand line long header file and I alwa
 
 ## TODO 🔨
 
-- Finalize valgrind integration
+- Add a separate PR workflow with a valgrind check and create a pr comment if these checks fail
+- ~~Finalize valgrind integration~~
 
 ## Future plans 🗒️
 

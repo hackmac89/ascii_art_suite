@@ -13,14 +13,14 @@ void print_usage(void) {
 char *remove_file_extension(const char *filename) {
     char *dot = strrchr(filename, '.');
     if (!dot || dot == filename) {
-        char *result = (char *)malloc(strlen(filename) + 1);
+        char *result = (char *)malloc(strlen(filename) + 1 + 5); // +5 for ".aart"
         if (result) {
             strcpy(result, filename);
         }
         return result;
     }
     size_t len = dot - filename;
-    char *result = (char *)malloc(len + 1);
+    char *result = (char *)malloc(len + 1 + 5); // +5 for the ".aart" suffix
     if (result) {
         strncpy(result, filename, len);
         result[len] = '\0';
@@ -53,7 +53,9 @@ int main(int argc, char **argv) {
 
     char *input_image_file = argv[1];
     uint8_t scale_factor = atoi(argv[2]);
-    char *output_filename = remove_file_extension(extract_filename(input_image_file));
+    // Memory leak: char *output_filename = remove_file_extension(extract_filename(input_image_file));
+    char *filename = extract_filename(input_image_file);
+    char *output_filename = remove_file_extension(filename);
 
     aart_matrix_t *ascii_array = convert_to_ascii_array(input_image_file, scale_factor);
     aart_file_t *new_aart_file = aart_file_new(ascii_array->ascii_data, ascii_array->height, ascii_array->width);
@@ -68,8 +70,11 @@ int main(int argc, char **argv) {
     puts("--------------------");
     print_ascii_matrix(ascii_array);
 
+    // free memory
     free_ascii_matrix(ascii_array);
     aart_file_free(new_aart_file);
+    free(filename);
+    free(output_filename);
 
     return EXIT_SUCCESS;
 }

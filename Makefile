@@ -20,8 +20,12 @@ docker-build-generator: check-for-docker
 docker-build-viewer: check-for-docker
 	@docker build -t ascii-art-viewer -f docker/viewer.Dockerfile .
 
-#valgrind: check-for-docker
-#	@docker run -it --rm -v $(PWD):/app -w /app ascii-art-generator valgrind --leak-check=full ./generator/ascii-art-generator
+valgrind: check-for-docker
+	@if [ -z "$(shell docker images -q ascii_art_suite_valgrind:latest)" ]; then	\
+		echo "Building the docker image for valgrind";	\
+		docker build -t ascii_art_suite_valgrind -f docker/valgrind.Dockerfile .;	\
+	fi
+	@docker run --rm -it ascii_art_suite_valgrind:latest
 
 help:
 	@echo "Usage:"

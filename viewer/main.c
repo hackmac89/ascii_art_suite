@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
     // Print basic usage information
     if (argc != 2) {
-        printf("Usage: %s <filename>\n", argv[0]);
+        printf("Usage: %s <aart filename>\n", argv[0]);
         return 1;
     }
 

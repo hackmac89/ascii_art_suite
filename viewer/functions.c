@@ -8,12 +8,14 @@ aart_file_t *create_header(void) {
         exit(EXIT_FAILURE);
     }
 
-    header->magic_number = (char *)malloc(HEADER_MAGIC_NUMBER_BYTES * sizeof(char));
+    header->magic_number = (char *)malloc(HEADER_MAGIC_NUMBER_BYTES * sizeof(char) + 1);
     if (header->magic_number == NULL) {
         printf("Memory allocation for magic number failed\n");
         free(header);
         return NULL;
     }
+    // Initialize the magic number with null terminator
+    memset(header->magic_number, 0, 5);
     header->row_count = 0;
     header->column_count = 0;
     header->payload = NULL;
