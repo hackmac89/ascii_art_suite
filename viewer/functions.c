@@ -58,7 +58,7 @@ bool populate_header(aart_file_t *header, FILE *f, char *filename) {
         return EXIT_FAILURE;
     }
 
-    // Allocate payload buffer and obtain/read payload
+    // Allocate payload buffer
     header->payload_size = header->row_count * header->column_count;
     header->payload = (unsigned char *)malloc(header->payload_size * sizeof(unsigned char));
     if (header->payload == NULL) {
@@ -68,8 +68,8 @@ bool populate_header(aart_file_t *header, FILE *f, char *filename) {
         return EXIT_FAILURE;
     }
 
+    // obtain/read payload
     fseek(f, HEADER_PAYLOAD_OFFSET, SEEK_SET);
-
     size_t bytes_read = 0;
     if ( (bytes_read = fread(header->payload, sizeof(unsigned char), header->payload_size, f)) != header->payload_size ) {
         printf("Could not read payload from file %s (%zu bytes read: %s)\n", filename, bytes_read, header->payload);
