@@ -72,6 +72,10 @@ I did not want to check in the several thousand line long header file and I alwa
 
 > ...
 
+## TODO 🔨
+
+- Finalize valgrind integration
+
 ## Future plans 🗒️
 
 - Add header bitfield used for flags for future updates, e.g. flags for additional options (checksums, additional ASCII mapping etc. pp.)
