@@ -132,12 +132,21 @@ jobs:
           run: mkdir -p dist
         # TODO: Use real cross compiling on the actual runners here,
         # e.g. by using "aarch64-linux-gnu-gcc" instead of "gcc" on the "ubuntu-latest" runner with the "arm64" architecture
-        - name: Compile Generator
+        - name: Compile Generator (Linux/Mac)
+          if: matrix.os != 'windows-latest'
           run: |
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_generator-${{ steps.get_tag_linux_mac.outputs.new_tag || steps.get_tag_windows.outputs.new_tag || env.NEW_TAG }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
+        # The Windows version of the aart_generator is needed to be compiled statically
+        - name: Compile Generator statically (Windows)
+          if: matrix.os == 'windows-latest'
+          run: |
+            gcc -Wall -pedantic -std=c99 -O2 -v -static -static-libgcc -static-libstdc++ -o dist/aart_generator-${{ steps.get_tag_windows.outputs.new_tag || env.NEW_TAG }}-windows-${{ matrix.arch }}${{ matrix.EXT }} generator/*.c -lm
         - name: Compile Viewer
           run: |
             gcc -Wall -pedantic -std=c99 -O2 -v -o dist/aart_viewer-${{ steps.get_tag_linux_mac.outputs.new_tag || steps.get_tag_windows.outputs.new_tag || env.NEW_TAG }}-${{ matrix.os == 'windows-latest' && 'windows' || matrix.os == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}${{ matrix.EXT }} viewer/*.c -lm
+        - name: Set execution bit on dists (Linux/Mac)
+          if: matrix.os != 'windows-latest'
+          run: chmod +x dist/*
         - name: Upload Generator Artifacts
           uses: actions/upload-artifact@v4
           with:
